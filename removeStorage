@@ -1,0 +1,5 @@
+
+    If(Test-Path -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\RemovableStorageDevices){
+         New-Item -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows -Name RemovableStorageDevice
+         New-ItemProperty -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows -Name RemovableStorageDevice -Name "Deny_All" -Value 1 -PropertyType DWORD
+    }
