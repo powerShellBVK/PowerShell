@@ -72,12 +72,66 @@ Erstellt einen lokalen Sicherheitsbericht mit lokalen Benutzern, lokalen Adminis
 .\Get-LocalSecurityAudit.ps1 -OutputPath C:\Reports
 ```
 
+### `Get-EventLogSummary.ps1`
+
+Sammelt Warnungen und Fehler aus System-, Application- und Security-Log mit `Get-WinEvent` und exportiert CSV/JSON.
+
+```powershell
+.\Get-EventLogSummary.ps1 -Days 2 -MaximumEvents 200 -OutputPath C:\Reports
+```
+
+### `Get-ProcessNetworkReport.ps1`
+
+Ordnet aktive TCP-Verbindungen den verantwortlichen Prozessen zu. Das hilft bei verdächtigen Verbindungen, blockierten Ports und Support-Fällen.
+
+```powershell
+.\Get-ProcessNetworkReport.ps1 -State Established -OutputPath C:\Reports
+.\Get-ProcessNetworkReport.ps1 -State Listen
+```
+
+### `Get-WindowsUpdateStatus.ps1`
+
+Zeigt Update-Dienste, installierte Hotfixes und Windows-Update-Ereignisse. Mit `-IncludeAvailable` wird die eingebaute Windows-Update-Suche über die COM-API abgefragt; es wird kein Update automatisch installiert.
+
+```powershell
+.\Get-WindowsUpdateStatus.ps1 -IncludeAvailable -OutputPath C:\Reports
+```
+
+### `Get-PrinterHealth.ps1`
+
+Prüft den Druckerwarteschlangendienst, installierte Drucker und offene Druckaufträge.
+
+```powershell
+.\Get-PrinterHealth.ps1 -PrinterName '*' -OutputPath C:\Reports
+```
+
+### `Repair-WindowsImage.ps1`
+
+Führt standardmäßig nur eine Prüfung des Windows-Komponentenspeichers und optional eine SFC-Prüfung aus. Reparaturen sind ausdrücklich opt-in:
+
+```powershell
+.\Repair-WindowsImage.ps1 -WhatIf
+.\Repair-WindowsImage.ps1 -RunSfc -WhatIf
+.\Repair-WindowsImage.ps1 -Repair -RunSfc
+```
+
+`-Repair` und `-RunSfc` benötigen eine als Administrator gestartete PowerShell. DISM und SFC können lange laufen und sollten nicht während eines laufenden Wartungsfensters abgebrochen werden.
+
 ## Sicherheitshinweise
 
 - Skripte zuerst mit `-WhatIf` oder auf einem Testclient ausführen.
 - Reports können Gerätenamen, Benutzer, Software und Sicherheitsinformationen enthalten. Nicht ungeschützt weitergeben.
 - Für zentrale Ausführung sollten Signierung, Intune, Configuration Manager, Gruppenrichtlinien oder ein kontrolliertes Management-System verwendet werden.
 - Das Toolkit enthält bewusst keine automatischen Kennwortänderungen, keine Deaktivierung von Sicherheitssoftware und keine destruktiven Registry-Tweaks.
+- Die neuen Reports basieren ausschließlich auf Windows-Bordmitteln wie `Get-WinEvent`, `Get-NetTCPConnection`, `Get-MpComputerStatus`, `Get-BitLockerVolume`, `Get-Volume`, `Get-Printer`, DISM und SFC.
+
+## Microsoft-Dokumentation
+
+- [`Get-WinEvent`](https://learn.microsoft.com/powershell/module/microsoft.powershell.diagnostics/get-winevent)
+- [`Get-NetTCPConnection`](https://learn.microsoft.com/powershell/module/nettcpip/get-nettcpconnection)
+- [`Get-MpComputerStatus`](https://learn.microsoft.com/powershell/module/defender/get-mpcomputerstatus)
+- [`Get-BitLockerVolume`](https://learn.microsoft.com/powershell/module/bitlocker/get-bitlockervolume)
+- [`Get-Volume`](https://learn.microsoft.com/powershell/module/storage/get-volume)
 
 ## Testen
 
