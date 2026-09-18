@@ -117,6 +117,48 @@ Führt standardmäßig nur eine Prüfung des Windows-Komponentenspeichers und op
 
 `-Repair` und `-RunSfc` benötigen eine als Administrator gestartete PowerShell. DISM und SFC können lange laufen und sollten nicht während eines laufenden Wartungsfensters abgebrochen werden.
 
+### `Get-ScheduledTaskReport.ps1`
+
+Findet geplante Tasks mit Aktivität oder einem nicht erfolgreichen letzten Ergebnis. Das ist hilfreich bei fehlgeschlagenen Update-, Backup- und Wartungsaufgaben.
+
+```powershell
+.\Get-ScheduledTaskReport.ps1 -Days 14 -OutputPath C:\Reports
+```
+
+### `Get-DeviceDriverHealth.ps1`
+
+Prüft Plug-and-Play-Geräte, Konfigurationsfehler und nicht signierte Treiber. Es werden keine Treiber installiert oder verändert.
+
+```powershell
+.\Get-DeviceDriverHealth.ps1 -OutputPath C:\Reports
+```
+
+### `Get-DiskSpaceReport.ps1`
+
+Erkennt Laufwerke mit zu wenig freiem Speicher. Der Grenzwert ist anpassbar und der Bericht wird als CSV/JSON gespeichert.
+
+```powershell
+.\Get-DiskSpaceReport.ps1 -MinimumFreePercent 20 -OutputPath C:\Reports
+```
+
+### `Invoke-GroupPolicyRefresh.ps1`
+
+Startet `gpupdate.exe` kontrolliert. Ohne Schalter wird die normale Aktualisierung verwendet; `-Force` erzwingt die erneute Anwendung. Mit `-WhatIf` kann der geplante Schritt vorher angezeigt werden.
+
+```powershell
+.\Invoke-GroupPolicyRefresh.ps1 -WhatIf
+.\Invoke-GroupPolicyRefresh.ps1 -Force -Wait
+```
+
+### `Register-ClientHealthTask.ps1`
+
+Registriert optional eine geplante Aufgabe, die regelmäßig den Health-Report erzeugt. Die Aufgabe läuft als `SYSTEM`, benötigt eine administrative PowerShell und überschreibt nur eine Aufgabe mit demselben Namen.
+
+```powershell
+.\Register-ClientHealthTask.ps1 -WhatIf
+.\Register-ClientHealthTask.ps1 -Frequency Weekly -Hour 8
+```
+
 ## Sicherheitshinweise
 
 - Skripte zuerst mit `-WhatIf` oder auf einem Testclient ausführen.
@@ -124,6 +166,7 @@ Führt standardmäßig nur eine Prüfung des Windows-Komponentenspeichers und op
 - Für zentrale Ausführung sollten Signierung, Intune, Configuration Manager, Gruppenrichtlinien oder ein kontrolliertes Management-System verwendet werden.
 - Das Toolkit enthält bewusst keine automatischen Kennwortänderungen, keine Deaktivierung von Sicherheitssoftware und keine destruktiven Registry-Tweaks.
 - Die neuen Reports basieren ausschließlich auf Windows-Bordmitteln wie `Get-WinEvent`, `Get-NetTCPConnection`, `Get-MpComputerStatus`, `Get-BitLockerVolume`, `Get-Volume`, `Get-Printer`, DISM und SFC.
+- Auch die Erweiterungen verwenden ausschließlich Windows-Bordmittel: `Get-ScheduledTask`, `Get-ScheduledTaskInfo`, `Get-CimInstance`, `Get-Volume`, `gpupdate.exe` und die Scheduled-Tasks-Cmdlets.
 
 ## Microsoft-Dokumentation
 
@@ -132,6 +175,9 @@ Führt standardmäßig nur eine Prüfung des Windows-Komponentenspeichers und op
 - [`Get-MpComputerStatus`](https://learn.microsoft.com/powershell/module/defender/get-mpcomputerstatus)
 - [`Get-BitLockerVolume`](https://learn.microsoft.com/powershell/module/bitlocker/get-bitlockervolume)
 - [`Get-Volume`](https://learn.microsoft.com/powershell/module/storage/get-volume)
+- [`Get-ScheduledTask`](https://learn.microsoft.com/powershell/module/scheduledtasks/get-scheduledtask)
+- [`Get-CimInstance`](https://learn.microsoft.com/powershell/module/cimcmdlets/get-ciminstance)
+- [`Get-Acl`](https://learn.microsoft.com/powershell/module/microsoft.powershell.security/get-acl)
 
 ## Testen
 
